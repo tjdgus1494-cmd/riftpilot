@@ -6,6 +6,15 @@
 [![License](https://img.shields.io/badge/license-MIT-blue)]()
 
 ![RiftPilot web UI and overlay preview](assets/riftpilot-preview.svg)
+
+## Project documents
+
+- [License](LICENSE)
+- [Contributing Guide](CONTRIBUTING.md)
+- [Changelog](CHANGELOG.md)
+- [Roadmap](ROADMAP.md)
+- [Development Log](DEVELOPMENT_LOG.md)
+
 ---
 
 ## Project Overview
@@ -212,3 +221,4 @@ Recommendations consider:
 - AI Gameplay Explanation
 - AI Coach
 - 포지션 자동 추론과 팀 조합 시너지 점수
+
