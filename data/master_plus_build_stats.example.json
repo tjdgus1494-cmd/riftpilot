@@ -1,0 +1,35 @@
+{
+  "version": 1,
+  "source": "riot-match-v5-local-collector",
+  "generatedAt": "2026-06-29T20:30:00+09:00",
+  "patch": "replace-with-current-patch",
+  "rank": "MASTER+",
+  "champions": {
+    "ExampleChampion": {
+      "TOP": [
+        {
+          "core": [3078, 6610, 3053],
+          "wins": 64,
+          "games": 118,
+          "winrate": 0.542,
+          "pickrate": 0.214,
+          "position": "TOP",
+          "rank": "MASTER+",
+          "patch": "example-only"
+        }
+      ],
+      "ANY": [
+        {
+          "core": [3078, 3053, 6333],
+          "wins": 41,
+          "games": 81,
+          "winrate": 0.506,
+          "pickrate": 0.087,
+          "position": "ANY",
+          "rank": "MASTER+",
+          "patch": "example-only"
+        }
+      ]
+    }
+  }
+}

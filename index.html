@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>LoL Item Recommender</title>
+    <link rel="stylesheet" href="./styles.css?v=7">
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <div class="brand">
+          <span class="brand-mark">LoL</span>
+          <div>
+            <h1>소환사의 협곡 아이템 추천</h1>
+            <p id="patchLine">로컬 데이터 준비 중</p>
+          </div>
+        </div>
+        <div class="top-actions">
+          <div class="segmented" aria-label="데이터 모드">
+            <button id="modeDemo" class="is-active" type="button">데모</button>
+            <button id="modeLive" type="button">라이브</button>
+            <button id="modeReplay" type="button">샘플</button>
+            <button id="modeReplayLive" type="button">실제리플</button>
+          </div>
+          <button id="refreshButton" class="ghost-button" type="button">새로고침</button>
+          <button id="watchModeButton" class="ghost-button" type="button">영상모드</button>
+        </div>
+      </header>
+
+      <main class="dashboard">
+        <aside class="control-panel" aria-label="추천 조건">
+          <section class="panel-section">
+            <div class="section-head">
+              <h2>내 챔피언</h2>
+              <span id="connectionBadge" class="badge neutral">대기</span>
+            </div>
+            <label>
+              챔피언
+              <select id="championSelect"></select>
+            </label>
+            <label>
+              플레이 스타일
+              <select id="archetypeSelect">
+                <option value="marksman">원거리 딜러</option>
+                <option value="mage">마법사</option>
+                <option value="assassin">암살자</option>
+                <option value="fighter">브루저</option>
+                <option value="tank">탱커</option>
+                <option value="support">서포터</option>
+              </select>
+            </label>
+            <label>
+              현재 골드
+              <input id="goldInput" type="number" min="0" max="12000" step="50" value="2200">
+            </label>
+          </section>
+
+          <section class="panel-section">
+            <div class="section-head">
+              <h2>상대 압박</h2>
+            </div>
+            <label>
+              상대 조합
+              <select id="enemyProfileSelect">
+                <option value="balanced">밸런스형</option>
+                <option value="physical">AD 압박</option>
+                <option value="magic">AP 압박</option>
+                <option value="healing">회복/흡혈 많음</option>
+                <option value="tank">방어 스택 많음</option>
+                <option value="cc">군중제어 많음</option>
+              </select>
+            </label>
+            <div class="toggle-row">
+              <label class="check-label">
+                <input id="snowballToggle" type="checkbox">
+                내가 앞서감
+              </label>
+              <label class="check-label">
+                <input id="behindToggle" type="checkbox">
+                생존 우선
+              </label>
+            </div>
+          </section>
+
+          <section id="replayPanel" class="panel-section replay-panel" hidden>
+            <div class="section-head">
+              <h2>샘플 리플레이</h2>
+              <span id="replayTime" class="badge warn">00:00</span>
+            </div>
+            <label>
+              타임라인
+              <input id="replaySlider" type="range" min="0" max="0" step="1" value="0">
+            </label>
+            <div class="replay-actions">
+              <button id="replayPrev" class="ghost-button" type="button">이전</button>
+              <button id="replayPlay" class="ghost-button primary" type="button">재생</button>
+              <button id="replayNext" class="ghost-button" type="button">다음</button>
+            </div>
+            <p id="replayLabel" class="replay-label">샘플 장면 준비 중</p>
+          </section>
+
+          <section id="actualReplayPanel" class="panel-section replay-panel" hidden>
+            <div class="section-head">
+              <h2>실제 리플레이</h2>
+              <span id="actualReplayState" class="badge neutral">대기</span>
+            </div>
+            <div class="actual-replay-readout">
+              <strong id="actualReplayTime">--:--</strong>
+              <span id="actualReplaySpeed">속도 --</span>
+            </div>
+            <label>
+              추천 대상
+              <select id="actualReplayTarget"></select>
+            </label>
+            <div class="replay-actions">
+              <button id="actualReplayBack" class="ghost-button" type="button">-10초</button>
+              <button id="actualReplayPlay" class="ghost-button primary" type="button">재생/정지</button>
+              <button id="actualReplayForward" class="ghost-button" type="button">+10초</button>
+            </div>
+            <p id="actualReplayNote" class="replay-label">LoL 클라이언트에서 리플레이를 재생한 뒤 연결하세요.</p>
+          </section>
+
+          <section class="panel-section compact">
+            <div class="section-head">
+              <h2>현재 아이템</h2>
+            </div>
+            <div id="ownedItems" class="owned-items"></div>
+          </section>
+        </aside>
+
+        <section class="content-area">
+          <div class="score-strip">
+            <div>
+              <span class="metric-label">물리 위협</span>
+              <div class="meter"><span id="physicalMeter"></span></div>
+            </div>
+            <div>
+              <span class="metric-label">마법 위협</span>
+              <div class="meter magic"><span id="magicMeter"></span></div>
+            </div>
+            <div>
+              <span class="metric-label">회복 압박</span>
+              <div class="meter heal"><span id="healMeter"></span></div>
+            </div>
+            <div>
+              <span class="metric-label">방어 스택</span>
+              <div class="meter armor"><span id="tankMeter"></span></div>
+            </div>
+          </div>
+
+          <section class="recommendation-zone">
+            <div class="section-title-line">
+              <div>
+                <h2>추천 아이템</h2>
+                <p id="contextLine">데모 상황으로 계산됨</p>
+              </div>
+              <span id="goldBadge" class="gold-badge">2200g</span>
+            </div>
+            <div id="recommendations" class="recommendation-grid"></div>
+          </section>
+
+          <section class="lower-grid">
+            <div class="analysis-panel">
+              <div class="section-title-line small">
+                <h2>판 읽기</h2>
+              </div>
+              <ul id="analysisList" class="analysis-list"></ul>
+            </div>
+            <div class="analysis-panel">
+              <div class="section-title-line small">
+                <h2>다음 구매</h2>
+              </div>
+              <div id="nextBuys" class="next-buy-list"></div>
+            </div>
+          </section>
+        </section>
+      </main>
+    </div>
+
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+    <script src="./app.js?v=7"></script>
+  </body>
+</html>

@@ -1,0 +1,99 @@
+{
+  "savedAt": "2026-06-29 23:17:50",
+  "target": {
+    "champion": "에코",
+    "position": "JUNGLE",
+    "archetype": "assassin",
+    "damage": "마법",
+    "level": 9
+  },
+  "gold": {
+    "gold": 4100,
+    "source": "추정",
+    "detail": "CS 70 / KDA 4킬 5어시 / 보유템 1775g",
+    "spent": 1775
+  },
+  "build": {
+    "completedCores": 0,
+    "plannedCores": [
+      "리치베인",
+      "라바돈의 죽음모자",
+      "존야의 모래시계"
+    ],
+    "metaPaths": []
+  },
+  "threat": {
+    "physical": 10,
+    "magic": 10,
+    "healing": 9,
+    "shielding": 9,
+    "crit": 0,
+    "tank": 0,
+    "cc": 4,
+    "burst": 10,
+    "fedBurst": 10,
+    "lead": 10,
+    "avgArmor": 10,
+    "avgMr": 10,
+    "armorStack": 0,
+    "mrStack": 0,
+    "physicalEhp": 2,
+    "magicEhp": 2,
+    "lethalBurst": 3,
+    "avgArmorValue": 62,
+    "avgMrValue": 43,
+    "physicalEhpValue": 2319,
+    "magicEhpValue": 2051,
+    "topBurst": "카타리나 약 1195 피해 (78%)",
+    "topBurstDamage": 1195,
+    "topBurstRatio": 78,
+    "primary": "카타리나 Lv9 4/2/1"
+  },
+  "allyCounters": {
+    "antiheal": 0
+  },
+  "confidence": {
+    "label": "보통",
+    "detail": "1위 222점 / 2위와 52점 차",
+    "gap": 52,
+    "topScore": 222
+  },
+  "recommendations": [
+    {
+      "item": "리치베인",
+      "nextBuy": "리치베인",
+      "score": 222,
+      "timing": "완성템 지금 구매",
+      "reasons": [
+        "+170 1코어 진행",
+        "+24 역할 적합",
+        "+28 완성 구매 가능"
+      ]
+    },
+    {
+      "item": "라바돈의 죽음모자",
+      "nextBuy": "라바돈의 죽음모자",
+      "score": 170,
+      "timing": "완성템 지금 구매",
+      "reasons": [
+        "+118 다음 코어 후보",
+        "+24 역할 적합",
+        "+28 완성 구매 가능"
+      ]
+    },
+    {
+      "item": "존야의 모래시계",
+      "nextBuy": "존야의 모래시계",
+      "score": 100,
+      "timing": "완성템 지금 구매",
+      "reasons": [
+        "+46 3코어 후보",
+        "-70 아직 순서 이른 편",
+        "+24 역할 적합",
+        "+22 폭딜 위협 10/10",
+        "+50 성장한 암살자/폭딜 10/10",
+        "+28 완성 구매 가능"
+      ]
+    }
+  ]
+}
