@@ -5,7 +5,7 @@
 [![Status](https://img.shields.io/badge/status-active-success)]()
 [![License](https://img.shields.io/badge/license-MIT-blue)]()
 
-![RiftPilot web UI and overlay preview](assets/riftpilot-preview.svg)
+![RiftPilot web UI and overlay preview](assets/overlay-screenshot.png)
 
 ## Project documents
 
@@ -220,5 +220,6 @@ Recommendations consider:
 - Automatic Role Detection
 - AI Gameplay Explanation
 - AI Coach
-- 포지션 자동 추론과 팀 조합 시너지 점수
+- ?��????�동 추론�??� 조합 ?�너지 ?�수
+
 
