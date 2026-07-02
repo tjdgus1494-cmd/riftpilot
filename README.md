@@ -1,6 +1,16 @@
-# LoL Item Recommender MVP
+# RiftPilot
 
-소환사의 협곡 진행 중 상황을 읽어서 아이템 후보와 이유를 보여주는 로컬 웹앱입니다. 자동 구매가 아니라 추천 패널입니다.
+소환사의 협곡 진행 중 상황을 읽어서 아이템 후보와 이유를 보여주는 로컬 웹앱과 데스크톱 오버레이입니다. 자동 구매가 아니라 추천 패널입니다.
+
+![RiftPilot web UI and overlay preview](assets/riftpilot-preview.svg)
+
+## Screenshots
+
+- Web UI: replay/live data panel with threat and build context
+- Overlay: always-on-top recommendation cards for watching a replay
+- Recommendation example: item score, next buy, timing, and reasons
+
+> The preview above is a README-ready visual asset. Replace it with a real screenshot or GIF at the same path when you capture live gameplay.
 
 ## 실행
 
