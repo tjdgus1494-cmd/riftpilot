@@ -1,105 +1,214 @@
 # RiftPilot
 
-소환사의 협곡 진행 중 상황을 읽어서 아이템 후보와 이유를 보여주는 로컬 웹앱과 데스크톱 오버레이입니다. 자동 구매가 아니라 추천 패널입니다.
+> Open-source AI Assistant for League of Legends
+
+[![Status](https://img.shields.io/badge/status-active-success)]()
+[![License](https://img.shields.io/badge/license-MIT-blue)]()
 
 ![RiftPilot web UI and overlay preview](assets/riftpilot-preview.svg)
+---
 
-## Screenshots
+## Project Overview
 
-- Web UI: replay/live data panel with threat and build context
-- Overlay: always-on-top recommendation cards for watching a replay
-- Recommendation example: item score, next buy, timing, and reasons
+RiftPilot is an open-source AI assistant designed to help League of Legends players make better decisions throughout an entire match.
 
-> The preview above is a README-ready visual asset. Replace it with a real screenshot or GIF at the same path when you capture live gameplay.
+Unlike traditional build websites that mainly display popular builds or win rates, RiftPilot analyzes live game information and recommends context-aware item builds based on the current game state.
 
-## 실행
+The long-term goal of this project is to support players from champion select to post-game analysis by combining player history, team composition analysis, and AI-powered explanations.
+
+The project runs entirely on the user's local environment using Riot's Local API and does not modify or automate gameplay.
+
+---
+
+## Why RiftPilot?
+
+Many existing League of Legends tools only provide static statistics or popular builds.
+
+However, real in-game decisions depend on much more than popularity.
+
+Current gold, owned items, enemy champions, team composition, game progression, and player experience all influence the optimal decision.
+
+RiftPilot aims to recommend recommendations based on the actual game state rather than fixed build paths.
+
+---
+
+## Current Features
+
+- Real-time game data collection using Riot Local API
+- Live item recommendation system
+- Desktop overlay
+- Local web interface
+- Replay mode support
+- Automatic gold estimation
+- Enemy threat analysis
+- Master+ build statistics
+- Recommendation confidence score
+- Recommendation snapshot saving
+- Situation-based counter item recommendation
+- Anti-heal recommendation
+- Anti-shield recommendation
+- Anti-critical recommendation
+
+---
+
+## Planned Features
+
+- AI Champion Recommendation during Ban/Pick
+- Player Match History Analysis
+- Team Composition Synergy Analysis
+- Counter Pick Recommendation
+- Rune Recommendation
+- Skill Order Recommendation
+- AI Explanation for Recommendations
+- Replay Performance Analysis
+- Patch-aware Recommendation Engine
+- AI Gameplay Coach
+
+---
+
+## Technology Stack
+
+- Python
+- Node.js
+- JavaScript
+- HTML / CSS
+- Riot Local API
+- Riot Data Dragon API
+- Desktop Overlay
+- JSON-based Build Database
+
+---
+
+## Roadmap
+
+### Version 1.0
+
+- Live Item Recommendation
+- Desktop Overlay
+- Replay Support
+- Master+ Build Statistics
+
+### Version 1.5
+
+- Champion Recommendation
+- Draft Assistant
+- Player History Analysis
+
+### Version 2.0
+
+- Rune Recommendation
+- Skill Order Recommendation
+- AI Explanation Engine
+
+### Version 3.0
+
+- Replay Analysis
+- AI Match Review
+- Gameplay Feedback
+- Patch Analysis
+
+---
+
+## Open Source
+
+RiftPilot is developed as an open-source project.
+
+Contributions are welcome through bug reports, feature suggestions, documentation improvements, and pull requests.
+
+The project will continue evolving alongside future League of Legends patches.
+
+---
+
+# LoL Item Recommender MVP
+
+This project provides a local recommendation panel that analyzes Summoner's Rift game data and recommends context-aware item choices.
+
+It is a recommendation tool only and does **not** automate gameplay or purchase items automatically.
+
+## Run
 
 ```powershell
 node server.js
 ```
 
-브라우저에서 `http://127.0.0.1:5177/`을 엽니다.
+Open
 
-## 동작 방식
+```
+http://127.0.0.1:5177/
+```
 
-- `/api/live`는 `https://127.0.0.1:2999/liveclientdata/allgamedata`를 읽습니다.
-- LoL 게임이 진행 중이면 현재 골드, 내 아이템, 상대 챔피언/아이템을 사용합니다.
-- 게임이 없으면 데모 모드에서 챔피언, 골드, 상대 조합을 바꿔 추천을 확인할 수 있습니다.
-- 리플레이 모드는 `.rofl` 파일 직접 파싱이 아니라, 라이브 API와 같은 형태의 샘플 스냅샷을 순서대로 재생합니다.
-- 실제리플 모드는 LoL 클라이언트에서 재생 중인 리플레이의 `https://127.0.0.1:2999/replay/playback`과 가능한 경우 `liveclientdata/allgamedata`를 읽습니다.
-- `/api/ddragon`은 Riot Data Dragon에서 최신 한국어 아이템 이름과 이미지를 가져옵니다.
+## How It Works
 
-## 실제 리플레이 연동
+- Reads live game information through Riot Local API.
+- Supports live games, demo mode, replay mode, and real replay mode.
+- Uses Riot Data Dragon to retrieve the latest Korean item information.
+- Calculates recommendations using current gold, inventory, enemy champions, and enemy items.
 
-1. LoL 클라이언트에서 경기 리플레이를 재생합니다.
-2. 이 앱에서 상단 `실제리플`을 누릅니다.
-3. `재생/정지`, `-10초`, `+10초` 버튼으로 Riot Replay API 제어를 테스트합니다.
-4. 리플레이 환경에서 `liveclientdata`가 제공되면 현재 골드/아이템 기준 추천이 자동 계산됩니다.
-
-`.rofl` 파일을 직접 파싱하지는 않습니다. 실제 LoL 클라이언트가 리플레이를 재생 중이어야 합니다.
-
-## 데스크톱 오버레이
+## Desktop Overlay
 
 ```powershell
 python overlay.py
 ```
 
-또는 `start-overlay.bat`을 실행합니다.
-
-- 항상 위에 뜨는 작은 창으로 추천 3개를 표시합니다.
-- 상단 바를 드래그해서 위치를 옮길 수 있습니다.
-- `Esc` 또는 우측 `x` 버튼으로 닫습니다.
-- 골드는 정확값이 제공되면 그대로 쓰고, 관전/리플레이처럼 정확값이 없으면 게임 시간, CS, 킬/어시, 보유 아이템 가격으로 자동 추정합니다.
-- 추천은 챔피언별 빌드 플랜을 먼저 따릅니다: 1코어 진행, 다음 코어, 신발, 상황템 순서입니다.
-- 추천 카드에는 목표 아이템과 다음 하위템이 함께 표시됩니다. 예: `광휘의 검 -> 삼위일체`.
-- 상황템은 상대 위협이 높아도 1코어 전에는 보류 페널티를 받습니다.
-- 점수 근거가 표시됩니다: 마스터+ 1/2/3코어 경로, 빌드 승률/표본, 역할 적합, 하위템 진행도, 상대 위협, 구매 가능 여부 등.
-- 상대 위협은 챔피언 성향뿐 아니라 레벨, KDA, CS, 보유 아이템 가격을 함께 봅니다. 잘 큰 암살자/폭딜러가 있으면 존야, 수호 천사, 방어/마저 아이템 보정이 커집니다.
-- 상대 방어력/마법 저항력은 리플레이 API가 직접 주지 않는 경우가 많아서 챔피언 유형, 레벨, 보유 탱템으로 추정합니다. 평균 방어/마저가 높으면 방어구 관통, 마법 관통, 방깎 아이템 점수가 올라갑니다.
-- 상대 폭딜은 전체 스킬 계수를 완전 계산하는 방식이 아니라, 챔피언 폭딜 성향, 레벨, KDA, 공격 아이템, 내 방어/마저/체력을 합친 위험 추정치입니다. 추정 피해가 내 체력 대비 높으면 생존 아이템 점수가 올라갑니다.
-- 추천 확신도는 1순위 점수와 2순위 점수 차이로 표시합니다. 점수차가 작으면 `낮음`으로 표시해서 대안 선택 여지를 숨기지 않습니다.
-- 추천 카드에는 `지금 귀환 구매`, `한 웨이브 더`, `장기 목표`처럼 다음 하위템/완성템 기준 구매 타이밍을 표시합니다.
-- 치감 아이템은 상대 회복 위협뿐 아니라 아군이 이미 치감을 보유했는지도 봅니다. 팀에 치감이 없으면 강하게 추천하고, 2명 이상 보유 중이면 점수를 낮춥니다.
-- 원딜/AD 암살자 후보군에 징수의 총, 고속 연사포, 루난, 유령 무희, 요우무, 밤의 끝자락, 세릴다, 독사의 송곳니, 기회, 마나무네를 추가했습니다.
-- 보호막 챔피언/아이템이 많으면 `독사의 송곳니` 같은 anti-shield 아이템 점수가 올라갑니다.
-- 치명타/평타 위협이 높으면 란두인, 판금 장화, 얼어붙은 심장 같은 anti-crit/anti-auto 아이템 점수가 올라갑니다.
-- 오버레이 연결 상태는 `리플레이 API 대기 중`, `추천 서버 연결 실패`, `데이터 해석 오류`처럼 원인을 나눠 표시합니다.
-- 오버레이는 최신 추천 결과를 `data/latest_recommendation.json`에 저장합니다. 현재 추천, 점수, 위협 수치, 고티어 빌드 비교를 나중에 다시 확인할 수 있습니다.
-
-## 마스터+ 1/2/3코어 빌드 통계
-
-오버레이는 `data/master_plus_build_stats.json`이 있으면 챔피언/포지션별 고티어 빌드 경로를 읽습니다.
+or
 
 ```powershell
-$env:RIOT_API_KEY = "RGAPI-..."
-$env:RIOT_PATCH = "16.13"
-python collect_master_build_stats.py
+start-overlay.bat
 ```
 
-수집기는 Riot League-V4로 Master/Grandmaster/Challenger 소환사를 찾고, Match-V5 매치/타임라인에서 아이템 구매 순서를 읽어 `1코어 > 2코어 > 3코어` 조합별 승률, 표본 수, 픽률을 계산합니다. 같은 경로의 prefix도 따로 집계해서 `1C`, `2C`, `3C` 단계별 승률을 비교할 수 있습니다.
+The overlay provides:
 
-- 실제 데이터 파일이 없으면 오버레이는 승률을 만들어내지 않고 `고티어 빌드 비교: 아직 통계 없음`으로 표시합니다.
-- 예시 스키마는 `data/master_plus_build_stats.example.json`에 있습니다. 이 파일은 실제 추천에 사용되지 않습니다.
-- `RIOT_PLATFORM`, `RIOT_REGION`, `RIOT_SUMMONER_LIMIT`, `RIOT_MATCH_COUNT` 환경 변수로 수집 범위를 조정할 수 있습니다.
-- `RIOT_PATCH`를 지정하면 해당 패치 경기만 통계에 포함합니다. 패치가 섞인 승률을 피하고 싶을 때 사용합니다.
-- 승률은 표본 수로 보정합니다. 10판 미만은 매우 낮은 신뢰도로 페널티를 받고, 40판 이상부터 보통 신뢰도, 120판 이상부터 높은 신뢰도로 표시합니다.
+- Always-on-top recommendation panel
+- Automatic gold estimation
+- Master+ build path comparison
+- Threat analysis
+- Confidence score
+- Purchase timing guidance
+- Anti-heal recommendation
+- Anti-shield recommendation
+- Anti-critical recommendation
+- Recommendation snapshot export
 
-## 추천 기준
+## Master+ Build Statistics
 
-- 내 챔피언 스타일: 원거리 딜러, 마법사, 암살자, 브루저, 탱커, 서포터
-- 상대 위협: 물리 피해, 마법 피해, 회복/흡혈, 방어 스택, 군중제어, 순간 폭딜
-- 상대 성장도: 레벨 차이, 킬/어시, CS, 아이템 가격
-- 상대 내구도 추정: 평균 방어력, 평균 마법 저항력, 물리/마법 기준 EHP
-- 상대 폭딜 추정: 가장 위험한 상대가 현재 내 내구 기준으로 줄 수 있는 예상 피해 비율
-- 추천 확신도: 1순위와 2순위 점수 차이, 1순위 절대 점수
-- 고티어 빌드 통계: 챔피언/포지션별 1코어, 2코어, 3코어 구매 순서의 승률과 표본
-- 현재 골드와 보유 하위 아이템
-- 역할별 핵심 능력치와 상황별 대응 아이템
+The recommendation engine supports champion and role-specific Master+ build statistics.
 
-## 다음 확장 후보
+Statistics include:
 
-- 챔피언별 1~3코어 빌드 프리셋 추가
-- 라이브 게임 스냅샷 저장/불러오기
-- Riot match-v5 API 기반 승률/픽률 데이터 반영
-- 오버레이 창 또는 Tauri 데스크톱 앱 패키징
+- First Core
+- Second Core
+- Third Core
+- Win Rate
+- Pick Rate
+- Sample Size
+
+The collector retrieves data through Riot APIs.
+
+## Recommendation Factors
+
+Recommendations consider:
+
+- Champion role
+- Enemy threats
+- Team composition
+- Current gold
+- Current inventory
+- Build completion progress
+- Threat estimation
+- Effective Health estimation
+- Burst damage estimation
+- Master+ build statistics
+- Recommendation confidence
+
+## Future Expansion
+
+- AI Champion Recommendation
+- Ban/Pick Assistant
+- Team Synergy Score
+- Replay Snapshot Storage
+- Riot Match-V5 Integration
+- Desktop Application Packaging
+- Automatic Role Detection
+- AI Gameplay Explanation
+- AI Coach
 - 포지션 자동 추론과 팀 조합 시너지 점수
