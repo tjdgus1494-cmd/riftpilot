@@ -1,13 +1,13 @@
 # RiftPilot
 
-> Open-source AI Assistant for League of Legends
+> Local-first, explainable item recommendation prototype for League of Legends.
 
 [![Status](https://img.shields.io/badge/status-active-success)]()
 [![License](https://img.shields.io/badge/license-MIT-blue)]()
 
-![RiftPilot web UI and overlay preview](assets/overlay-screenshot.png)
+![RiftPilot overlay screenshot](assets/overlay-screenshot.png)
 
-## Project documents
+## Project Documents
 
 - [License](LICENSE)
 - [Contributing Guide](CONTRIBUTING.md)
@@ -19,207 +19,184 @@
 
 ## Project Overview
 
-RiftPilot is an open-source AI assistant designed to help League of Legends players make better decisions throughout an entire match.
+RiftPilot is a local-first item recommendation prototype for League of Legends. It is designed to help players inspect item choices during gameplay and replay-style workflows by combining local game data, transparent heuristic scoring, and optional high-tier build statistics support.
 
-Unlike traditional build websites that mainly display popular builds or win rates, RiftPilot analyzes live game information and recommends context-aware item builds based on the current game state.
+The project runs in the user's local environment. It does not buy items, control the game client, or automate gameplay.
 
-The long-term goal of this project is to support players from champion select to post-game analysis by combining player history, team composition analysis, and AI-powered explanations.
-
-The project runs entirely on the user's local environment using Riot's Local API and does not modify or automate gameplay.
+RiftPilot is currently focused on item recommendation, threat-aware scoring, and explanation of recommendation factors. It should be understood as an experimental prototype, not a production-grade coaching system.
 
 ---
 
 ## Why RiftPilot?
 
-Many existing League of Legends tools only provide static statistics or popular builds.
+League of Legends itemization is contextual. Good item choices can depend on current gold, owned items, enemy champions, enemy items, damage type, healing, shielding, crowd control, and whether a specific opponent is ahead.
 
-However, real in-game decisions depend on much more than popularity.
-
-Current gold, owned items, enemy champions, team composition, game progression, and player experience all influence the optimal decision.
-
-RiftPilot aims to recommend recommendations based on the actual game state rather than fixed build paths.
+RiftPilot aims to provide item recommendations based on the actual game state rather than fixed build paths. The recommendation logic is intentionally inspectable so users can see why an item was suggested.
 
 ---
 
 ## Current Features
 
-- Real-time game data collection using Riot Local API
-- Live item recommendation system
-- Desktop overlay
-- Local web interface
-- Replay mode support
-- Automatic gold estimation
-- Enemy threat analysis
-- Master+ build statistics
-- Recommendation confidence score
-- Recommendation snapshot saving
-- Situation-based counter item recommendation
-- Anti-heal recommendation
-- Anti-shield recommendation
-- Anti-critical recommendation
+The following features are implemented in the current codebase:
+
+- Local web dashboard for demo, live, sample replay, and replay-style workflows
+- Desktop overlay built with Python/Tkinter
+- Local Node.js server for static files and proxy endpoints
+- Riot Local API proxy support
+- Riot replay-style endpoint support when local replay data is available
+- Riot Data Dragon proxy for item and champion metadata
+- Heuristic item recommendation logic
+- Threat-aware item scoring for damage type, healing, shielding, crowd control, burst risk, and item timing
+- Automatic gold estimation when exact gold is not available
+- Optional Master+ build statistics collector
+- Optional 1-core, 2-core, and 3-core build path comparison when local stats are available
+- Recommendation confidence and score-gap display
+- Recommendation snapshot output to `data/latest_recommendation.json`
+- Regression tests for selected recommendation logic
+- Development log documenting major implementation changes
 
 ---
-
-## Planned Features
-
-- AI Champion Recommendation during Ban/Pick
-- Player Match History Analysis
-- Team Composition Synergy Analysis
-- Counter Pick Recommendation
-- Rune Recommendation
-- Skill Order Recommendation
-- AI Explanation for Recommendations
-- Replay Performance Analysis
-- Patch-aware Recommendation Engine
-- AI Gameplay Coach
-
----
-
-## Technology Stack
-
-- Python
-- Node.js
-- JavaScript
-- HTML / CSS
-- Riot Local API
-- Riot Data Dragon API
-- Desktop Overlay
-- JSON-based Build Database
-
----
-
-## Roadmap
-
-### Version 1.0
-
-- Live Item Recommendation
-- Desktop Overlay
-- Replay Support
-- Master+ Build Statistics
-
-### Version 1.5
-
-- Champion Recommendation
-- Draft Assistant
-- Player History Analysis
-
-### Version 2.0
-
-- Rune Recommendation
-- Skill Order Recommendation
-- AI Explanation Engine
-
-### Version 3.0
-
-- Replay Analysis
-- AI Match Review
-- Gameplay Feedback
-- Patch Analysis
-
----
-
-## Open Source
-
-RiftPilot is developed as an open-source project.
-
-Contributions are welcome through bug reports, feature suggestions, documentation improvements, and pull requests.
-
-The project will continue evolving alongside future League of Legends patches.
-
----
-
-# LoL Item Recommender MVP
-
-This project provides a local recommendation panel that analyzes Summoner's Rift game data and recommends context-aware item choices.
-
-It is a recommendation tool only and does **not** automate gameplay or purchase items automatically.
 
 ## Run
+
+Start the local server:
 
 ```powershell
 node server.js
 ```
 
-Open
+Open:
 
-```
+```text
 http://127.0.0.1:5177/
 ```
 
-## How It Works
-
-- Reads live game information through Riot Local API.
-- Supports live games, demo mode, replay mode, and real replay mode.
-- Uses Riot Data Dragon to retrieve the latest Korean item information.
-- Calculates recommendations using current gold, inventory, enemy champions, and enemy items.
-
-## Desktop Overlay
+Run the desktop overlay:
 
 ```powershell
 python overlay.py
 ```
 
-or
+or:
 
 ```powershell
 start-overlay.bat
 ```
 
+Run regression tests:
+
+```powershell
+python -B test_overlay_logic.py
+```
+
+---
+
+## How It Works
+
+- `server.js` serves the web app and proxies local Riot endpoints.
+- `/api/live` reads Riot Live Client Data API data when a live game is available.
+- Replay-style workflows use local replay endpoints when Riot's local client exposes them.
+- `/api/ddragon` retrieves Riot Data Dragon item and champion metadata.
+- `app.js` powers the web dashboard and recommendation panels.
+- `overlay.py` powers the desktop overlay and recommendation engine.
+- `collect_master_build_stats.py` can optionally generate local Master+ build statistics with a user-provided Riot API key.
+
+---
+
+## Desktop Overlay
+
 The overlay provides:
 
 - Always-on-top recommendation panel
+- Draggable desktop window
+- Target champion selection
 - Automatic gold estimation
-- Master+ build path comparison
 - Threat analysis
-- Confidence score
 - Purchase timing guidance
-- Anti-heal recommendation
-- Anti-shield recommendation
-- Anti-critical recommendation
-- Recommendation snapshot export
+- Recommendation confidence score
+- Anti-heal, anti-shield, and anti-critical item considerations
+- Latest recommendation snapshot export
 
-## Master+ Build Statistics
+---
 
-The recommendation engine supports champion and role-specific Master+ build statistics.
+## Optional Master+ Build Statistics Support
 
-Statistics include:
+RiftPilot can use locally generated Master+ build statistics if `data/master_plus_build_stats.json` exists.
 
-- First Core
-- Second Core
-- Third Core
-- Win Rate
-- Pick Rate
-- Sample Size
+The collector requires a Riot API key:
 
-The collector retrieves data through Riot APIs.
+```powershell
+$env:RIOT_API_KEY = "RGAPI-..."
+python collect_master_build_stats.py
+```
+
+The collector can aggregate first, second, and third core item paths from Riot API match and timeline data. These statistics are optional and are not bundled as a production dataset.
+
+Example schema:
+
+```text
+data/master_plus_build_stats.example.json
+```
+
+---
 
 ## Recommendation Factors
 
-Recommendations consider:
+Recommendations may consider:
 
-- Champion role
-- Enemy threats
-- Team composition
+- Champion role or archetype
 - Current gold
 - Current inventory
 - Build completion progress
-- Threat estimation
-- Effective Health estimation
-- Burst damage estimation
-- Master+ build statistics
-- Recommendation confidence
+- Enemy champion and item context
+- Physical and magic damage pressure
+- Healing and shielding threats
+- Crowd control pressure
+- Burst-risk estimates
+- Effective health estimates
+- Optional Master+ build path statistics
+- Recommendation confidence and score gap
 
-## Future Expansion
+The scoring is heuristic-based and explainable. It is not an exact full combat simulator.
 
-- AI Champion Recommendation
-- Ban/Pick Assistant
-- Team Synergy Score
-- Replay Snapshot Storage
-- Riot Match-V5 Integration
-- Desktop Application Packaging
-- Automatic Role Detection
-- AI Gameplay Explanation
-- AI Coach
-- ?¨Ï????êÎèô Ï∂îÎ°†Í≥??Ä Ï°∞Ìï© ?úÎÑàÏßÄ ?êÏàò
+---
 
+## Limitations / Not Implemented
 
+RiftPilot is an early-stage prototype. The following are not implemented as current features:
+
+- Direct `.rofl` file parsing
+- Automatic item purchasing
+- Gameplay automation
+- Exact full champion damage simulation
+- Complete champion-specific coverage
+- Built-in production Master+ dataset
+- Packaged desktop installer
+- Production-grade recommendation accuracy validation
+
+Replay-style support depends on what the local Riot client exposes while a game or replay is running.
+
+---
+
+## Planned Work
+
+Near-term planned work is tracked in [ROADMAP.md](ROADMAP.md) and GitHub Issues.
+
+Current planning areas include:
+
+- Replay workflow documentation
+- Expanded regression test coverage
+- Improved champion-specific item profiles
+- Ban/Pick champion recommendation design
+- Master+ build statistics documentation
+- Packaged desktop release planning
+
+These items are planned or design-stage work unless explicitly marked as implemented.
+
+---
+
+## Open Source Notes
+
+RiftPilot is released under the [MIT License](LICENSE).
+
+This project is not affiliated with Riot Games. Users are responsible for following Riot Games policies and API terms when using Riot local client APIs, replay endpoints, Data Dragon, or Riot developer APIs.
