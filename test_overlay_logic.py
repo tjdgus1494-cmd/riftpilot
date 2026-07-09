@@ -56,13 +56,13 @@ def caitlyn_profile_prioritizes_rapid_firecannon_after_two_cores():
     assert_true(result[4][0]["item"]["id"] == 3094, f"Caitlyn should see Rapid Firecannon as 3rd core, got {result[4][0]['item']['name']}")
 
 
-def jhin_profile_starts_collector_before_ie():
+def jhin_profile_starts_youmuu_before_collector():
     players = [
         {"team": "ORDER", "championName": "Jhin", "rawChampionName": "Jhin", "position": "BOTTOM", "level": 9, "scores": {"kills": 4, "deaths": 1, "assists": 3, "creepScore": 135}, "items": [{"itemID": 3134}]},
         {"team": "CHAOS", "championName": "Jinx", "rawChampionName": "Jinx", "position": "BOTTOM", "level": 9, "scores": {"kills": 1, "deaths": 4, "assists": 2, "creepScore": 120}, "items": [{"itemID": 6672}]},
     ]
     result = overlay.recommend(players[0], players, {"gold": 1500, "source": "test", "detail": "mock", "spent": 1000})
-    assert_true(result[4][0]["item"]["id"] == 6676, f"Jhin should start Collector path, got {result[4][0]['item']['name']}")
+    assert_true(result[4][0]["item"]["id"] == 3142, f"Jhin should start Youmuu path, got {result[4][0]['item']['name']}")
 
 def shield_threat_surfaces_serpents_fang():
     players = [
@@ -109,7 +109,7 @@ def main():
         antiheal_accounts_for_allied_coverage,
         crit_threat_pushes_anti_crit_items,
         caitlyn_profile_prioritizes_rapid_firecannon_after_two_cores,
-        jhin_profile_starts_collector_before_ie,
+        jhin_profile_starts_youmuu_before_collector,
         shield_threat_surfaces_serpents_fang,
         fed_assassin_burst_pushes_stasis,
         stage_winrates_are_displayed,
