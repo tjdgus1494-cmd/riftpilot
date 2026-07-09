@@ -2,6 +2,10 @@
 
 All notable project changes should be documented in this file.
 
+## Unreleased
+
+- Added replay workflow documentation for the current local replay-style workflow and its limitations.
+
 ## [0.1.0] - 2026-07-03
 
 ### Initial Public Release
