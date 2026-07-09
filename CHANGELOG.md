@@ -4,6 +4,7 @@ All notable project changes should be documented in this file.
 
 ## Unreleased
 
+- Added Master+ build stats collector documentation with environment variables, output files, and limitations.
 - Added replay workflow documentation for the current local replay-style workflow and its limitations.
 
 ## [0.1.0] - 2026-07-03
