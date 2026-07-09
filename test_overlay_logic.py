@@ -68,6 +68,26 @@ def lane_armor_stack_pushes_penetration_choice():
     assert_true(any("라인 상대 방어력" in reason for reason in top["breakdown"]), top["breakdown"])
 
 
+def off_path_crit_item_counts_as_core_progress():
+    players = [
+        {"team": "ORDER", "championName": "Caitlyn", "rawChampionName": "Caitlyn", "position": "BOTTOM", "level": 10, "scores": {"kills": 4, "deaths": 1, "assists": 3, "creepScore": 160}, "items": [{"itemID": 6676}]},
+        {"team": "CHAOS", "championName": "Ezreal", "rawChampionName": "Ezreal", "position": "BOTTOM", "level": 10, "scores": {"kills": 1, "deaths": 4, "assists": 2, "creepScore": 140}, "items": [{"itemID": 3004}]},
+    ]
+    result = overlay.recommend(players[0], players, {"gold": 1500, "source": "test", "detail": "mock", "spent": 3000})
+    assert_true(result[6] == 1, f"Collector should count as one marksman core-equivalent, got {result[6]}")
+    assert_true(result[4][0]["item"]["id"] == 3031, f"Caitlyn should move toward Infinity Edge after off-path crit core, got {result[4][0]['item']['name']}")
+
+
+def defensive_item_does_not_count_as_marksman_core_progress():
+    players = [
+        {"team": "ORDER", "championName": "Caitlyn", "rawChampionName": "Caitlyn", "position": "BOTTOM", "level": 10, "scores": {"kills": 2, "deaths": 4, "assists": 2, "creepScore": 135}, "items": [{"itemID": 3026}]},
+        {"team": "CHAOS", "championName": "Ezreal", "rawChampionName": "Ezreal", "position": "BOTTOM", "level": 10, "scores": {"kills": 3, "deaths": 2, "assists": 4, "creepScore": 150}, "items": [{"itemID": 3004}]},
+    ]
+    result = overlay.recommend(players[0], players, {"gold": 1500, "source": "test", "detail": "mock", "spent": 3200})
+    assert_true(result[6] == 0, f"Guardian Angel should not count as Caitlyn core progress, got {result[6]}")
+    assert_true(result[4][0]["item"]["id"] == 6672, f"Caitlyn should still see Kraken as first core, got {result[4][0]['item']['name']}")
+
+
 def jhin_profile_starts_youmuu_before_collector():
     players = [
         {"team": "ORDER", "championName": "Jhin", "rawChampionName": "Jhin", "position": "BOTTOM", "level": 9, "scores": {"kills": 4, "deaths": 1, "assists": 3, "creepScore": 135}, "items": [{"itemID": 3134}]},
@@ -122,6 +142,8 @@ def main():
         crit_threat_pushes_anti_crit_items,
         caitlyn_profile_prioritizes_rapid_firecannon_after_two_cores,
         lane_armor_stack_pushes_penetration_choice,
+        off_path_crit_item_counts_as_core_progress,
+        defensive_item_does_not_count_as_marksman_core_progress,
         jhin_profile_starts_youmuu_before_collector,
         shield_threat_surfaces_serpents_fang,
         fed_assassin_burst_pushes_stasis,

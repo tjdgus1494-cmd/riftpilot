@@ -1125,8 +1125,67 @@ def build_threat(target, players):
     return result
 
 
-def completed_item_count(item_ids, plan_ids):
-    return sum(1 for item_id in plan_ids if item_id in item_ids)
+CORE_SIMILARITY_TAGS = {
+    "attackDamage", "abilityPower", "attackSpeed", "crit", "lethality",
+    "magicPen", "armorPen", "antiTank", "burst", "duel", "spellblade",
+    "mana", "haste", "health", "armor", "magicResist", "healShield",
+    "utility", "teamfight", "core", "scaling",
+}
+
+
+def is_completed_candidate_item(item_id):
+    item = ITEM_BY_ID.get(item_id)
+    if not item:
+        return False
+    tags = set(item.get("tags", []))
+    return "boots" not in tags and item.get("cost", ITEM_COSTS.get(item_id, 0)) >= 2200
+
+
+def core_similarity_score(owned_id, plan_id, archetype):
+    owned = ITEM_BY_ID.get(owned_id)
+    planned = ITEM_BY_ID.get(plan_id)
+    if not owned or not planned:
+        return 0
+    owned_tags = set(owned.get("tags", []))
+    planned_tags = set(planned.get("tags", []))
+    if "boots" in owned_tags or "boots" in planned_tags:
+        return 0
+    owned_roles = set(owned.get("roles", []))
+    planned_roles = set(planned.get("roles", []))
+    shared_tags = len((owned_tags & planned_tags) & CORE_SIMILARITY_TAGS)
+    score = shared_tags
+    if archetype and archetype in owned_roles:
+        score += 1
+    if owned_roles & planned_roles:
+        score += 1
+    if "core" in owned_tags and "core" in planned_tags:
+        score += 1
+    if owned_tags & {"armor", "magicResist", "antiBurst", "defense"} and not (planned_tags & {"armor", "magicResist", "antiBurst", "defense"}):
+        score -= 1
+    return score
+
+
+def completed_item_count(item_ids, plan_ids, archetype=None):
+    owned_ids = set(item_ids)
+    exact_plan_matches = {item_id for item_id in plan_ids if item_id in owned_ids}
+    count = len(exact_plan_matches)
+    unmatched_plan = [item_id for item_id in plan_ids if item_id not in exact_plan_matches and item_id in ITEM_BY_ID]
+
+    for owned_id in owned_ids:
+        if owned_id in exact_plan_matches or not is_completed_candidate_item(owned_id):
+            continue
+        best_plan = None
+        best_score = 0
+        for plan_id in unmatched_plan:
+            score = core_similarity_score(owned_id, plan_id, archetype)
+            if score > best_score:
+                best_score = score
+                best_plan = plan_id
+        if best_plan and best_score >= 4:
+            count += 1
+            unmatched_plan.remove(best_plan)
+
+    return min(count, len(plan_ids))
 
 
 def get_build_profile(champion_key, archetype):
@@ -1385,7 +1444,7 @@ def recommend(target, players, gold_info):
         "gold_info": gold_info,
         "owned_ids": owned_ids,
         "ally_antiheal_count": ally_antiheal_count,
-        "completed_cores": completed_item_count(owned_ids, profile.get("core", [])),
+        "completed_cores": completed_item_count(owned_ids, profile.get("core", []), archetype),
     }
     candidates = []
     seen = set()
