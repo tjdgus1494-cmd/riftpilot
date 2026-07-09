@@ -243,6 +243,8 @@ BUILD_PROFILES = {
     "Yone": {"core": [6672, 3031, 3153], "situational": [3091, 3026, 3156], "boots": {"default": 3006, "physical": 3047, "magic": 3111}},
     "Yasuo": {"core": [6672, 3031, 3153], "situational": [3091, 3026, 3156], "boots": {"default": 3006, "physical": 3047, "magic": 3111}},
     "Aphelios": {"core": [6672, 3031, 3036], "situational": [3033, 3072, 3026], "boots": {"default": 3006, "physical": 3047, "magic": 3111}},
+    "Caitlyn": {"core": [6672, 3031, 3094], "situational": [3036, 3033, 3072, 3026], "boots": {"default": 3006, "physical": 3047, "magic": 3111}},
+    "Jhin": {"core": [6676, 3031, 3094], "situational": [3036, 3033, 3026], "boots": {"default": 3006, "physical": 3047, "magic": 3111}},
     "Lucian": {"core": [6672, 3031, 3036], "situational": [3033, 3072, 3026], "boots": {"default": 3006, "physical": 3047, "magic": 3111}},
     "Ezreal": {"core": [3004, 3078, 6694], "situational": [3156, 3026, 3033], "boots": {"default": 3158, "physical": 3047, "magic": 3111}},
     "KaiSa": {"core": [6672, 3031, 3036], "situational": [3033, 3072, 3026], "boots": {"default": 3006, "physical": 3047, "magic": 3111}},

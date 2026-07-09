@@ -47,6 +47,23 @@ def crit_threat_pushes_anti_crit_items():
     names = [entry["item"]["name"] for entry in result[4]]
     assert_true(names[0] in {"판금 장화", "란두인의 예언"}, f"Anti-crit item should lead, got {names}")
 
+def caitlyn_profile_prioritizes_rapid_firecannon_after_two_cores():
+    players = [
+        {"team": "ORDER", "championName": "Caitlyn", "rawChampionName": "Caitlyn", "position": "BOTTOM", "level": 13, "scores": {"kills": 6, "deaths": 2, "assists": 5, "creepScore": 230}, "items": [{"itemID": 6672}, {"itemID": 3031}]},
+        {"team": "CHAOS", "championName": "Ezreal", "rawChampionName": "Ezreal", "position": "BOTTOM", "level": 12, "scores": {"kills": 2, "deaths": 5, "assists": 4, "creepScore": 190}, "items": [{"itemID": 3004}, {"itemID": 3078}]},
+    ]
+    result = overlay.recommend(players[0], players, {"gold": 1800, "source": "test", "detail": "mock", "spent": 6500})
+    assert_true(result[4][0]["item"]["id"] == 3094, f"Caitlyn should see Rapid Firecannon as 3rd core, got {result[4][0]['item']['name']}")
+
+
+def jhin_profile_starts_collector_before_ie():
+    players = [
+        {"team": "ORDER", "championName": "Jhin", "rawChampionName": "Jhin", "position": "BOTTOM", "level": 9, "scores": {"kills": 4, "deaths": 1, "assists": 3, "creepScore": 135}, "items": [{"itemID": 3134}]},
+        {"team": "CHAOS", "championName": "Jinx", "rawChampionName": "Jinx", "position": "BOTTOM", "level": 9, "scores": {"kills": 1, "deaths": 4, "assists": 2, "creepScore": 120}, "items": [{"itemID": 6672}]},
+    ]
+    result = overlay.recommend(players[0], players, {"gold": 1500, "source": "test", "detail": "mock", "spent": 1000})
+    assert_true(result[4][0]["item"]["id"] == 6676, f"Jhin should start Collector path, got {result[4][0]['item']['name']}")
+
 def shield_threat_surfaces_serpents_fang():
     players = [
         {"team": "ORDER", "championName": "Zed", "rawChampionName": "Zed", "position": "MIDDLE", "level": 13, "scores": {"kills": 7, "deaths": 3, "assists": 4, "creepScore": 170}, "items": [{"itemID": 3142}, {"itemID": 3134}]},
@@ -91,6 +108,8 @@ def main():
         zed_recommends_ad_assassin_items,
         antiheal_accounts_for_allied_coverage,
         crit_threat_pushes_anti_crit_items,
+        caitlyn_profile_prioritizes_rapid_firecannon_after_two_cores,
+        jhin_profile_starts_collector_before_ie,
         shield_threat_surfaces_serpents_fang,
         fed_assassin_burst_pushes_stasis,
         stage_winrates_are_displayed,
