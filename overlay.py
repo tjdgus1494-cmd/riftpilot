@@ -1007,14 +1007,41 @@ def build_threat(target, players):
     target_spent = inventory_value(target)
     target_defense = estimate_defense_profile(target)
     enemies = [p for p in players if p.get("team") and p.get("team") != target_team]
+    target_position = canonical_position(target.get("position") or target.get("teamPosition"))
+    lane_enemy = None
+    if target_position:
+        lane_candidates = [
+            enemy
+            for enemy in enemies
+            if canonical_position(enemy.get("position") or enemy.get("teamPosition")) == target_position
+        ]
+        if lane_candidates:
+            def lane_pressure(enemy):
+                scores = player_scores(enemy)
+                return (
+                    player_level(enemy) * 0.25
+                    + max(0, player_level(enemy) - target_level) * 0.7
+                    + scores["kills"] * 0.8
+                    + scores["assists"] * 0.18
+                    + max(0, scores["kills"] - scores["deaths"]) * 0.45
+                    + max(0, inventory_value(enemy) - target_spent) / 1500
+                )
+
+            lane_enemy = max(lane_candidates, key=lane_pressure)
     top_threat = {"score": 0, "label": ""}
     top_burst = {"damage": 0, "label": ""}
     defense_rows = []
+    lane_defense = None
+    lane_label = ""
     for enemy in enemies:
         key = normalize_champion_key(enemy.get("rawChampionName") or enemy.get("championName"))
         hint = CHAMPION_HINTS.get(key, {"damage": "mixed", "tank": 1, "cc": 1, "burst": 1})
         defense = estimate_defense_profile(enemy)
         defense_rows.append(defense)
+        if enemy is lane_enemy:
+            lane_defense = defense
+            champion_label = enemy.get("championName") or key or "상대"
+            lane_label = f"{champion_label} Lv{int(player_level(enemy))}"
         scores = player_scores(enemy)
         level_delta = max(0, player_level(enemy) - target_level)
         spent_delta = max(0, inventory_value(enemy) - target_spent)
@@ -1079,6 +1106,22 @@ def build_threat(target, players):
     result["topBurstDamage"] = round(top_burst["damage"])
     result["topBurstRatio"] = round(top_burst.get("ratio", 0) * 100)
     result["primary"] = top_threat["label"]
+    if lane_defense:
+        result["laneOpponent"] = lane_label
+        result["laneArmorValue"] = round(lane_defense["armor"])
+        result["laneMrValue"] = round(lane_defense["magicResist"])
+        result["lanePhysicalEhpValue"] = round(lane_defense["physicalEhp"])
+        result["laneMagicEhpValue"] = round(lane_defense["magicEhp"])
+        result["laneArmorStack"] = min(10, round(max(0, (lane_defense["armor"] - 82) / 7)))
+        result["laneMrStack"] = min(10, round(max(0, (lane_defense["magicResist"] - 58) / 6)))
+    else:
+        result["laneOpponent"] = ""
+        result["laneArmorValue"] = 0
+        result["laneMrValue"] = 0
+        result["lanePhysicalEhpValue"] = 0
+        result["laneMagicEhpValue"] = 0
+        result["laneArmorStack"] = 0
+        result["laneMrStack"] = 0
     return result
 
 
@@ -1238,6 +1281,12 @@ def score_plan_item(item, entry, context):
     if threat.get("mrStack", 0) >= 5 and (magic_pen_fit or ("antiTank" in tags and damage_profile["magic"] >= 0.45)):
         points = 28 if entry["type"] != "core" else 18
         add(round(points * damage_profile["magic"]), f"{damage_profile['label']} 딜 + 평균 마저 {threat.get('avgMrValue', 0)} 추정")
+    if threat.get("laneArmorStack", 0) >= 4 and (physical_pen_fit or ("antiTank" in tags and damage_profile["physical"] >= 0.45)):
+        points = 44 if entry["type"] != "core" else 28
+        add(round(points * damage_profile["physical"]), f"라인 상대 방어력 {threat.get('laneArmorValue', 0)} 추정")
+    if threat.get("laneMrStack", 0) >= 4 and (magic_pen_fit or ("antiTank" in tags and damage_profile["magic"] >= 0.45)):
+        points = 44 if entry["type"] != "core" else 28
+        add(round(points * damage_profile["magic"]), f"라인 상대 마저 {threat.get('laneMrValue', 0)} 추정")
     if threat["physical"] >= threat["magic"] + 2 and tags.intersection({"armor", "antiAuto", "antiCrit"}):
         add(20 if completed_cores else 8, f"AD 위협 {threat['physical']}/10")
     if threat["physical"] >= threat["magic"] + 4 and "magicResist" in tags and not tags.intersection({"armor", "stasis"}):

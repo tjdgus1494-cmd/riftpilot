@@ -56,6 +56,18 @@ def caitlyn_profile_prioritizes_rapid_firecannon_after_two_cores():
     assert_true(result[4][0]["item"]["id"] == 3094, f"Caitlyn should see Rapid Firecannon as 3rd core, got {result[4][0]['item']['name']}")
 
 
+def lane_armor_stack_pushes_penetration_choice():
+    players = [
+        {"team": "ORDER", "championName": "Caitlyn", "rawChampionName": "Caitlyn", "position": "BOTTOM", "level": 14, "scores": {"kills": 7, "deaths": 2, "assists": 5, "creepScore": 245}, "items": [{"itemID": 6672}, {"itemID": 3031}]},
+        {"team": "CHAOS", "championName": "Rammus", "rawChampionName": "Rammus", "position": "BOTTOM", "level": 15, "scores": {"kills": 5, "deaths": 1, "assists": 8, "creepScore": 205}, "items": [{"itemID": 3143}, {"itemID": 3110}, {"itemID": 3047}]},
+        {"team": "CHAOS", "championName": "Lux", "rawChampionName": "Lux", "position": "MIDDLE", "level": 13, "scores": {"kills": 2, "deaths": 4, "assists": 7, "creepScore": 160}, "items": [{"itemID": 6655}]},
+    ]
+    result = overlay.recommend(players[0], players, {"gold": 2300, "source": "test", "detail": "mock", "spent": 6500})
+    top = result[4][0]
+    assert_true(top["item"]["id"] == 3036, f"Lord Dominik's Regards should lead into lane armor stack, got {top['item']['name']}")
+    assert_true(any("라인 상대 방어력" in reason for reason in top["breakdown"]), top["breakdown"])
+
+
 def jhin_profile_starts_youmuu_before_collector():
     players = [
         {"team": "ORDER", "championName": "Jhin", "rawChampionName": "Jhin", "position": "BOTTOM", "level": 9, "scores": {"kills": 4, "deaths": 1, "assists": 3, "creepScore": 135}, "items": [{"itemID": 3134}]},
@@ -109,6 +121,7 @@ def main():
         antiheal_accounts_for_allied_coverage,
         crit_threat_pushes_anti_crit_items,
         caitlyn_profile_prioritizes_rapid_firecannon_after_two_cores,
+        lane_armor_stack_pushes_penetration_choice,
         jhin_profile_starts_youmuu_before_collector,
         shield_threat_surfaces_serpents_fang,
         fed_assassin_burst_pushes_stasis,
