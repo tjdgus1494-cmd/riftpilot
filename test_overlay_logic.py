@@ -47,6 +47,29 @@ def crit_threat_pushes_anti_crit_items():
     names = [entry["item"]["name"] for entry in result[4]]
     assert_true(names[0] in {"판금 장화", "란두인의 예언"}, f"Anti-crit item should lead, got {names}")
 
+def shield_threat_surfaces_serpents_fang():
+    players = [
+        {"team": "ORDER", "championName": "Zed", "rawChampionName": "Zed", "position": "MIDDLE", "level": 13, "scores": {"kills": 7, "deaths": 3, "assists": 4, "creepScore": 170}, "items": [{"itemID": 3142}, {"itemID": 3134}]},
+        {"team": "CHAOS", "championName": "Sett", "rawChampionName": "Sett", "position": "TOP", "level": 15, "scores": {"kills": 7, "deaths": 2, "assists": 5, "creepScore": 190}, "items": [{"itemID": 3053}, {"itemID": 3078}]},
+        {"team": "CHAOS", "championName": "Karma", "rawChampionName": "Karma", "position": "UTILITY", "level": 12, "scores": {"kills": 1, "deaths": 3, "assists": 14, "creepScore": 35}, "items": [{"itemID": 2065}, {"itemID": 6616}]},
+        {"team": "CHAOS", "championName": "Lulu", "rawChampionName": "Lulu", "position": "UTILITY", "level": 12, "scores": {"kills": 1, "deaths": 4, "assists": 16, "creepScore": 30}, "items": [{"itemID": 6616}, {"itemID": 3504}]},
+    ]
+    result = overlay.recommend(players[0], players, {"gold": 2500, "source": "test", "detail": "mock", "spent": 5600})
+    serpents = [entry for entry in result[4] if entry["item"]["id"] == 6695]
+    assert_true(serpents, f"Serpent's Fang should be visible into heavy shields, got {[entry['item']['name'] for entry in result[4]]}")
+    assert_true(any("보호막 위협" in reason for reason in serpents[0]["breakdown"]), serpents[0]["breakdown"])
+
+
+def fed_assassin_burst_pushes_stasis():
+    players = [
+        {"team": "ORDER", "championName": "Lux", "rawChampionName": "Lux", "position": "MIDDLE", "level": 12, "scores": {"kills": 3, "deaths": 4, "assists": 5, "creepScore": 150}, "items": [{"itemID": 6655}, {"itemID": 1052}]},
+        {"team": "CHAOS", "championName": "Zed", "rawChampionName": "Zed", "position": "MIDDLE", "level": 15, "scores": {"kills": 12, "deaths": 1, "assists": 4, "creepScore": 220}, "items": [{"itemID": 3142}, {"itemID": 6701}, {"itemID": 6694}]},
+        {"team": "CHAOS", "championName": "Kha'Zix", "rawChampionName": "KhaZix", "position": "JUNGLE", "level": 14, "scores": {"kills": 9, "deaths": 2, "assists": 6, "creepScore": 160}, "items": [{"itemID": 3142}, {"itemID": 3814}, {"itemID": 6695}]},
+    ]
+    result = overlay.recommend(players[0], players, {"gold": 2500, "source": "test", "detail": "mock", "spent": 4500})
+    top = result[4][0]
+    assert_true(top["item"]["id"] == 3157, f"Zhonya should lead into fed AD assassins, got {top['item']['name']}")
+    assert_true(any("예상 폭딜" in reason for reason in top["breakdown"]), top["breakdown"])
 
 def stage_winrates_are_displayed():
     meta = [{
@@ -68,6 +91,8 @@ def main():
         zed_recommends_ad_assassin_items,
         antiheal_accounts_for_allied_coverage,
         crit_threat_pushes_anti_crit_items,
+        shield_threat_surfaces_serpents_fang,
+        fed_assassin_burst_pushes_stasis,
         stage_winrates_are_displayed,
     ]
     for test in tests:
